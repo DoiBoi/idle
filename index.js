@@ -41,26 +41,22 @@ document.body.addEventListener('keydown', function (event) {
     }
 });
 
-// Touch controls
+// Touch interactions
 let touchStartX = null;
-let touchStartY = null;
 
-document.body.addEventListener('touchstart', function (e) {
-    if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
+document.addEventListener('touchstart', function (event) {
+    if (event.touches.length === 1) {
+        touchStartX = event.touches[0].clientX;
     }
 });
 
-document.body.addEventListener('touchend', function (e) {
-    if (touchStartX === null || touchStartY === null) return;
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchEndY = e.changedTouches[0].clientY;
-    const dx = touchEndX - touchStartX;
-    const dy = touchEndY - touchStartY;
-
-    // Only consider horizontal swipes
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+document.addEventListener('touchend', function (event) {
+    if (touchStartX === null) return;
+    let touchEndX = event.changedTouches[0].clientX;
+    let dx = touchEndX - touchStartX;
+    console.log(dx);
+    if (Math.abs(dx) > 30) {
+        // Horizontal swipe
         if (dx > 0) {
             // Swipe right (previous)
             if (index - 1 > 0) {
@@ -80,16 +76,10 @@ document.body.addEventListener('touchend', function (e) {
             changeAudio();
             document.body.style.backgroundImage = `url(imgs/${index}.gif)`
         }
-    } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
-        // Tap (mute/unmute)
+    } else if (Math.abs(dx) < 10) {
         var audio = document.getElementById("audio_src");
         audio.muted = !audio.muted;
     }
     touchStartX = null;
-    touchStartY = null;
 });
 
-
-// To ensure keyboard events are captured, focus the body
-document.body.tabIndex = 0;
-document.body.focus();
